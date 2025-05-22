@@ -7,6 +7,7 @@ var plugins = new List<IFileConverter>
     new JsonToCsvConverter(),
     new CsvToJsonConverter(),
     new JsonToXmlConverter(),
+    new XmlToJsonConverter(),
 };
 
 var engine = new FileConverterEngine(plugins);
