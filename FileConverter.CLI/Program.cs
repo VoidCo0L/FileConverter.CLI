@@ -4,8 +4,9 @@ using FileConverter.Plugins.Converters;
 
 var plugins = new List<IFileConverter>
 {
-    new JsonToCsvConverter()
-    // Add more converters later
+    new JsonToCsvConverter(),
+    new CsvToJsonConverter(),
+    new JsonToXmlConverter(),
 };
 
 var engine = new FileConverterEngine(plugins);
