@@ -8,6 +8,8 @@ var plugins = new List<IFileConverter>
     new CsvToJsonConverter(),
     new JsonToXmlConverter(),
     new XmlToJsonConverter(),
+    new YamlToJsonConverter(),
+    new JsonToYamlConverter(),
 };
 
 var engine = new FileConverterEngine(plugins);
