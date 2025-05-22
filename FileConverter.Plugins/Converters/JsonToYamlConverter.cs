@@ -1,7 +1,9 @@
 ﻿using FileConverter.Core.Interfaces;
-using System.Text.Json;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace FileConverter.Plugins.Converters
 {
@@ -12,13 +14,54 @@ namespace FileConverter.Plugins.Converters
 
         public string Convert(string inputContent)
         {
-            var jsonObject = JsonSerializer.Deserialize<object>(inputContent);
+            var token = JToken.Parse(inputContent);
+            var obj = ConvertJTokenToObject(token);
 
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
 
-            return serializer.Serialize(jsonObject);
+            return serializer.Serialize(obj);
+        }
+
+        private object? ConvertJTokenToObject(JToken token)
+        {
+            switch (token.Type)
+            {
+                case JTokenType.Object:
+                    var dict = new Dictionary<string, object?>();
+                    foreach (var prop in token.Children<JProperty>())
+                    {
+                        dict[prop.Name] = ConvertJTokenToObject(prop.Value);
+                    }
+                    return dict;
+
+                case JTokenType.Array:
+                    var list = new List<object?>();
+                    foreach (var item in token.Children())
+                    {
+                        list.Add(ConvertJTokenToObject(item));
+                    }
+                    return list;
+
+                case JTokenType.Integer:
+                    return token.ToObject<int>();
+
+                case JTokenType.Float:
+                    return token.ToObject<double>();
+
+                case JTokenType.String:
+                    return token.ToObject<string>();
+
+                case JTokenType.Boolean:
+                    return token.ToObject<bool>();
+
+                case JTokenType.Null:
+                    return null;
+
+                default:
+                    return token.ToString(); // fallback for other types
+            }
         }
     }
 }
