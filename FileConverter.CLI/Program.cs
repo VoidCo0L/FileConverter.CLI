@@ -30,7 +30,9 @@ var content = File.ReadAllText(inputPath);
 try
 {
     var output = engine.Convert(content, fromFormat, toFormat);
-    File.WriteAllText("output.txt", output);
+    var outputPath = Path.Combine(Path.GetDirectoryName(inputPath), "output.txt");
+    File.WriteAllText(outputPath, output);
+
     Console.WriteLine("✅ Conversion complete. Output saved to output.txt");
 }
 catch (Exception ex)
